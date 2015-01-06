@@ -1,0 +1,47 @@
+import ordrin
+
+api = ordrin.APIs('MtZjpjhRNQ4E1qpIOJTbZdjzBOgOXYzOOdaOQzqgIyo' , ordrin.TEST)
+addr = raw_input('Enter your street address')
+city = raw_input('Enter your city')
+state = raw_input('Enter your state')
+zip = raw_input('Enter zip code')
+
+max_del = raw_input('Maximum delivery time (Minutes)')
+wanted_cuisine_type = raw_input('Cuisine type')
+
+wanted_cuisine = wanted_cuisine_type.lower()
+
+restaurant_list = api.delivery_list('ASAP', addr, city, zip)
+
+condensed_list = []
+
+for restaurant in restaurant_list:
+	if restaurant['del'] <= max_del:
+		condensed_list.append(restaurant)
+
+condensed_list1 = []
+
+for restaurant in condensed_list:
+	cuisines = restaurant.get('cu', [])
+	for cuisine_type in cuisines:
+		if wanted_cuisine == cuisine_type.lower():
+			condensed_list1.append(restaurant)
+
+restaurant_id_list = []
+
+for restaurant in condensed_list1:
+	restaurant_id_list.append(restaurant['id'])
+
+
+name_menu_list = []
+
+for restaurant_id in restaurant_id_list:
+
+	details = api.restaurant_details(str(restaurant_id))
+
+	menu_details = {}
+	menu_details['name'] = details['name']
+	menu_details['menu'] = details['menu']
+	name_menu_list.append(menu_details)
+
+print name_menu_list
